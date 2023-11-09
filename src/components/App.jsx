@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { Section } from './Section';
 import { FeedbackOptions } from './FeedbackOptions';
 import { Statistics } from './Statistics';
+import { Notification } from './Notification';
 
 export class App extends Component {
   state = {
@@ -11,42 +12,43 @@ export class App extends Component {
   };
 
   countTotalFeedback = () => {
-    this.setState(prevState => ({
-      total: prevState.good + prevState.neutral + prevState.bad,
-    }));
+    const { good, neutral, bad } = this.state;
+    const total = good + neutral + bad;
+    return total;
   };
 
   countPositiveFeedbackPercentage = () => {
-    this.setState(prevState => ({
-      positivePercentage: (prevState.good / prevState.total) * 100,
-    }));
+    const positivePercentage =
+      (this.state.good / this.countTotalFeedback()) * 100;
+    return positivePercentage;
   };
 
-  handleLeaveFeedback = () => {
+  handleLeaveFeedback = option => {
     this.setState(prevState => {
-      return {
-        good: prevState.good + 1,
-      };
+      return { [option]: prevState[option] + 1 };
     });
-    this.countTotalFeedback();
-    this.countPositiveFeedbackPercentage();
   };
 
   render() {
-    const { good, neutral, bad, total, positivePercentage } = this.state;
+    const { good, neutral, bad } = this.state;
     return (
       <Section title="Please leave feedback">
         <FeedbackOptions
-          options={this.state}
+          options={Object.keys(this.state)}
           onLeaveFeedback={this.handleLeaveFeedback}
         />
-        <Statistics
-          good={good}
-          neutral={neutral}
-          bad={bad}
-          total={total}
-          positivePercentage={positivePercentage}
-        />
+        <h2>Statistics</h2>
+        {this.countTotalFeedback() === 0 ? (
+          <Notification message="There is no feedback" />
+        ) : (
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={this.countTotalFeedback()}
+            positivePercentage={this.countPositiveFeedbackPercentage().toFixed()}
+          />
+        )}
       </Section>
     );
   }
