@@ -8,9 +8,6 @@ export const FeedbackButton = styled('button')(() => {
     fontSize: '14px',
     fontWeight: '500',
     textTransform: 'capitalize',
-    // '& h1': {
-    //   fontSize: '24px',
-    //   marginBottom: '12px',
-    // },
+    cursor: 'pointer',
   };
 });
